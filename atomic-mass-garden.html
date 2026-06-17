@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สวนมวลอะตอม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chonburi&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#15241C;
+    --surface:#EFE6D2;
+    --surface-2:#E2D3AE;
+    --ink:#22301F;
+    --ink-soft:#5A6753;
+    --moss:#4F7942;
+    --moss-deep:#2F4F27;
+    --amber:#D6A331;
+    --copper:#B1552E;
+    --plum:#6B3F69;
+    --cream:#F5EFDD;
+    --line:rgba(34,48,31,.16);
+    --line-dark:rgba(245,239,221,.18);
+    --radius:14px;
+    --shadow:0 10px 28px rgba(0,0,0,.28);
+    --font-display:'Chonburi','Kanit',sans-serif;
+    --font-body:'IBM Plex Sans Thai','Sarabun',sans-serif;
+    --font-mono:'IBM Plex Mono','Consolas',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(circle at 18% -8%, #1F3A26 0%, #15241C 55%);
+    color:var(--cream);
+    font-family:var(--font-body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{max-width:920px;margin:0 auto;padding:18px 16px 60px;}
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  button:focus-visible, input:focus-visible, select:focus-visible{outline:3px solid var(--amber);outline-offset:2px;}
+  input,select{font-family:var(--font-body);}
+
+  .brandbar{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+  .brand-title{font-family:var(--font-display);font-size:28px;color:var(--cream);letter-spacing:.5px;}
+  .brand-sub{color:#B9C7AE;font-size:13px;margin-top:2px;}
+  .switchlink{font-size:12.5px;color:#B9C7AE;text-decoration:underline;background:none;padding:0;}
+
+  .card{background:var(--surface);color:var(--ink);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
+  .card + .card{margin-top:14px;}
+  .card-2{background:var(--surface-2);}
+
+  .hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap;}
+  .hero-tags{display:flex;gap:10px;flex-wrap:wrap;}
+
+  /* Signature element: nursery specimen tag */
+  .tag{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
+       width:64px;height:64px;border-radius:10px;color:#fff;font-family:var(--font-mono);
+       box-shadow:0 4px 10px rgba(0,0,0,.25);}
+  .tag:before{content:'';position:absolute;top:-9px;left:50%;width:2px;height:9px;background:rgba(0,0,0,.35);}
+  .tag .sym{font-size:19px;font-weight:700;line-height:1;}
+  .tag .mass{font-size:10px;opacity:.92;margin-top:2px;}
+  .tag.small{width:46px;height:46px;}
+  .tag.small .sym{font-size:14px;}
+  .tag.small .mass{font-size:8px;}
+  .tag.locked{filter:grayscale(1);opacity:.35;}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:11px 18px;border-radius:999px;font-weight:600;
+       font-size:14.5px;transition:transform .12s ease;}
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--moss);color:#F4EFDD;}
+  .btn-amber{background:var(--amber);color:#2A1E05;}
+  .btn-copper{background:var(--copper);color:#fff;}
+  .btn-outline{background:transparent;border:1.5px solid var(--ink);color:var(--ink);}
+  .btn-outline-light{background:transparent;border:1.5px solid var(--line-dark);color:var(--cream);}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-sm{padding:7px 12px;font-size:12.5px;}
+
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:5px;font-weight:600;}
+  .field input,.field select{width:100%;padding:11px 13px;border-radius:9px;border:1.5px solid var(--line);
+       background:#fff;color:var(--ink);font-size:14.5px;}
+
+  .topstats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .stat-chip{background:var(--surface);color:var(--ink);border-radius:11px;padding:9px 14px;display:flex;flex-direction:column;min-width:88px;}
+  .stat-chip b{font-family:var(--font-mono);font-size:17px;}
+  .stat-chip span{font-size:11px;color:var(--ink-soft);}
+
+  .tabs{display:flex;gap:6px;margin-bottom:14px;border-bottom:1.5px solid var(--line-dark);padding-bottom:0;flex-wrap:wrap;}
+  .tab{background:none;color:#B9C7AE;padding:9px 14px;font-weight:600;font-size:14px;border-bottom:3px solid transparent;}
+  .tab.active{color:var(--cream);border-bottom-color:var(--amber);}
+  .tab .pip{background:var(--copper);color:#fff;border-radius:99px;font-size:10.5px;padding:1px 6px;margin-left:5px;}
+
+  .plotgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px;}
+  @media (max-width:520px){.plotgrid{grid-template-columns:repeat(2,1fr);}}
+  .plot{background:var(--surface);border-radius:12px;padding:12px 10px;text-align:center;min-height:128px;
+        display:flex;flex-direction:column;align-items:center;justify-content:space-between;}
+  .plot.empty{background:transparent;border:1.6px dashed var(--line-dark);color:#9BAA90;justify-content:center;}
+  .plot.ready{box-shadow:0 0 0 3px var(--amber) inset, var(--shadow);}
+  .plot-emoji{font-size:30px;line-height:1;margin:4px 0;}
+  .progress{width:100%;height:7px;background:var(--line);border-radius:99px;overflow:hidden;}
+  .progress i{display:block;height:100%;background:var(--moss);}
+  .plot-name{font-size:11px;color:var(--ink-soft);font-family:var(--font-mono);}
+
+  .shoprow{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;}
+  .shopcard{background:var(--surface);border-radius:12px;padding:10px;text-align:center;color:var(--ink);}
+  .shopcard .price{font-family:var(--font-mono);font-size:13px;margin:6px 0;color:var(--ink-soft);}
+
+  .colgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:12px;}
+  .colitem{text-align:center;}
+  .colitem .cnt{font-size:11px;color:#B9C7AE;margin-top:4px;font-family:var(--font-mono);}
+
+  .notif-item{padding:11px 12px;border-bottom:1px solid var(--line);font-size:13.5px;}
+  .notif-item:last-child{border-bottom:none;}
+  .notif-time{font-size:11px;color:var(--ink-soft);margin-top:3px;}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{text-align:left;font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;
+     border-bottom:1.5px solid var(--ink);padding:6px 8px;}
+  td{padding:9px 8px;border-bottom:1px solid var(--line);font-family:var(--font-mono);}
+  td.name-cell{font-family:var(--font-body);font-weight:600;}
+  tr.rowlink{cursor:pointer;}
+  tr.rowlink:hover{background:rgba(0,0,0,.04);}
+
+  .summary4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+  @media (max-width:600px){.summary4{grid-template-columns:repeat(2,1fr);}}
+  .sumcard{background:var(--surface);border-radius:12px;padding:14px;color:var(--ink);}
+  .sumcard b{display:block;font-family:var(--font-mono);font-size:22px;}
+  .sumcard span{font-size:11.5px;color:var(--ink-soft);}
+
+  .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+  .bar-row .lbl{width:64px;font-size:12px;color:var(--ink-soft);flex-shrink:0;}
+  .bar-track{flex:1;height:14px;background:var(--line);border-radius:99px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--moss);}
+  .bar-row .ct{width:24px;font-family:var(--font-mono);font-size:12px;text-align:right;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(10,16,11,.6);display:flex;align-items:center;
+        justify-content:center;padding:16px;z-index:50;}
+  .modal-box{background:var(--surface);color:var(--ink);border-radius:16px;padding:22px;max-width:460px;
+        width:100%;max-height:86vh;overflow-y:auto;box-shadow:var(--shadow);}
+  .modal-box h3{font-family:var(--font-display);margin:0 0 12px;font-size:20px;}
+
+  .choice-btn{display:block;width:100%;text-align:left;background:#fff;border:1.6px solid var(--line);
+      border-radius:10px;padding:11px 14px;margin-bottom:8px;font-size:14.5px;color:var(--ink);}
+  .choice-btn:hover{border-color:var(--moss);}
+  .choice-btn.correct{background:#E3F1DD;border-color:var(--moss);}
+  .choice-btn.wrong{background:#F6DCD2;border-color:var(--copper);}
+  .choice-btn:disabled{cursor:default;}
+
+  .toast-wrap{position:fixed;bottom:18px;left:0;right:0;display:flex;flex-direction:column;align-items:center;
+      gap:8px;z-index:60;pointer-events:none;}
+  .toast{background:#222;color:#fff;padding:10px 18px;border-radius:99px;font-size:13.5px;box-shadow:var(--shadow);
+      animation:fadeup .25s ease;}
+  .toast.ok{background:var(--moss-deep);}
+  .toast.err{background:#7A2C2C;}
+  @keyframes fadeup{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .muted{color:var(--ink-soft);font-size:13px;}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .row.between{justify-content:space-between;}
+  .small-note{font-size:12px;color:#9BAA90;margin-top:10px;line-height:1.5;}
+  .badge-pill{display:inline-block;background:var(--plum);color:#fff;font-size:11px;border-radius:99px;
+      padding:3px 10px;margin:2px 4px 0 0;}
+  hr.hl{border:none;border-top:1px solid var(--line);margin:16px 0;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ===================== DATA ===================== */
+const ELEMENTS = [
+  {s:'H',  n:'ไฮโดรเจน',    m:1},
+  {s:'He', n:'ฮีเลียม',      m:4},
+  {s:'Li', n:'ลิเทียม',      m:7},
+  {s:'Be', n:'เบริลเลียม',   m:9},
+  {s:'B',  n:'โบรอน',        m:11},
+  {s:'C',  n:'คาร์บอน',      m:12},
+  {s:'N',  n:'ไนโตรเจน',     m:14},
+  {s:'O',  n:'ออกซิเจน',     m:16},
+  {s:'F',  n:'ฟลูออรีน',     m:19},
+  {s:'Ne', n:'นีออน',        m:20},
+  {s:'Na', n:'โซเดียม',      m:23},
+  {s:'Mg', n:'แมกนีเซียม',   m:24},
+  {s:'Al', n:'อะลูมิเนียม',  m:27},
+  {s:'Si', n:'ซิลิคอน',      m:28},
+  {s:'P',  n:'ฟอสฟอรัส',    m:31},
+  {s:'S',  n:'กำมะถัน',      m:32},
+  {s:'Cl', n:'คลอรีน',       m:35.5},
+  {s:'K',  n:'โพแทสเซียม',   m:39},
+  {s:'Ca', n:'แคลเซียม',     m:40},
+];
+const ELBY = {}; ELEMENTS.forEach(e=>ELBY[e.s]=e);
+const TEACHER_CODE = 'ครู2569';
+
+function tierOf(m){ if(m<=12) return 1; if(m<=20) return 2; if(m<=32) return 3; return 4; }
+function tierColor(t){ return t===1?'#4F7942':t===2?'#D6A331':t===3?'#B1552E':'#6B3F69'; }
+function tierLabel(t){ return t===1?'ทั่วไป':t===2?'ไม่ธรรมดา':t===3?'หายาก':'ตำนาน'; }
+function priceOf(m){ return Math.round(m*8); }
+function targetGrowth(m){ return Math.round(m*1.4)+6; }
+function harvestCoins(m){ return Math.round(priceOf(m)*1.4); }
+function harvestXp(m){ return Math.round(m); }
+function levelOf(xp){ return Math.floor(xp/40)+1; }
+function levelTitle(lv){
+  if(lv>=15) return 'เซียนตารางธาตุ';
+  if(lv>=10) return 'ปราชญ์มวลอะตอม';
+  if(lv>=6)  return 'นักเคมีประจำสวน';
+  if(lv>=3)  return 'ผู้ดูแลแปลงอะตอม';
+  return 'นักปลูกมือใหม่';
+}
+function plotEmoji(frac, ready){
+  if(ready) return '✨🪴';
+  if(frac<0.34) return '🌱';
+  if(frac<0.7) return '🌿';
+  return '🪴';
+}
+function fmt(n){ return Number(n).toLocaleString('th-TH'); }
+function timeAgo(ts){
+  const s = Math.floor((Date.now()-ts)/1000);
+  if(s<60) return 'เมื่อสักครู่';
+  if(s<3600) return Math.floor(s/60)+' นาทีที่แล้ว';
+  if(s<86400) return Math.floor(s/3600)+' ชั่วโมงที่แล้ว';
+  return Math.floor(s/86400)+' วันที่แล้ว';
+}
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function pickRandom(arr,n,exclude){
+  const pool = arr.filter(x=>!exclude || x.s!==exclude.s);
+  return shuffle(pool).slice(0,n);
+}
+function slugify(s){ return (s||'').trim().replace(/\s+/g,'_').replace(/['"\\\/]/g,''); }
+
+/* ===================== STORAGE HELPERS ===================== */
+async function rawGet(key, shared){
+  try{ const r = await window.storage.get(key, shared); return r ? r.value : null; }
+  catch(e){ return null; }
+}
+async function rawSet(key, value, shared){
+  try{ const r = await window.storage.set(key, value, shared); return !!r; }
+  catch(e){ console.error(e); return false; }
+}
+async function rawDelete(key, shared){
+  try{ await window.storage.delete(key, shared); return true; }
+  catch(e){ return false; }
+}
+async function getJSON(key, shared){
+  const v = await rawGet(key, shared);
+  if(v===null) return null;
+  try{ return JSON.parse(v); } catch(e){ return null; }
+}
+async function setJSON(key, obj, shared){
+  return rawSet(key, JSON.stringify(obj), shared);
+}
+async function loadIndex(){ const v = await getJSON('student_index', true); return v || []; }
+async function saveIndex(list){ return setJSON('student_index', list, true); }
+async function loadStudent(id){ return await getJSON('student:'+id, true); }
+async function saveStudent(s){ s.lastActive = Date.now(); return setJSON('student:'+s.id, s, true); }
+
+/* ===================== STATE ===================== */
+let STATE = { view:'loading', student:null, teacherStudents:null, teacherFilter:'ทั้งหมด',
+              tab:'garden', quiz:null, modal:null };
+
+function newStudent(name, classroom, id){
+  return {
+    id, name, classroom: classroom || 'ไม่ระบุ',
+    coins: 30, xp: 0,
+    plots: [null,null,null,null],
+    maxPlots: 4,
+    collection: {},
+    totalAnswered: 0, totalCorrect: 0,
+    items: [], badges: [], notifications: [],
+    createdAt: Date.now(), lastActive: Date.now()
+  };
+}
+
+/* ===================== TOAST ===================== */
+function toast(msg, type){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' '+type : '');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.remove(); }, 2600);
+}
+
+/* ===================== RENDER ROOT ===================== */
+function render(){
+  const app = document.getElementById('app');
+  if(STATE.view==='loading') app.innerHTML = renderLoading(STATE.loadingMsg || 'กำลังโหลด...');
+  else if(STATE.view==='home') app.innerHTML = renderHome();
+  else if(STATE.view==='studentLogin') app.innerHTML = renderStudentLogin();
+  else if(STATE.view==='student') app.innerHTML = renderStudentApp();
+  else if(STATE.view==='teacherLogin') app.innerHTML = renderTeacherLogin();
+  else if(STATE.view==='teacher') app.innerHTML = renderTeacherDashboard();
+  if(STATE.modal) app.innerHTML += STATE.modal;
+}
+function renderLoading(msg){
+  return `<div class="brandbar"><div><div class="brand-title">🌱 สวนมวลอะตอม</div></div></div>
+  <div class="card"><p class="muted">${msg}</p></div>`;
+}
+
+/* ===================== HOME ===================== */
+function renderHome(){
+  return `
+  <div class="brandbar">
+    <div>
+      <div class="brand-title">🌱 สวนมวลอะตอม</div>
+      <div class="brand-sub">ปลูกธาตุ เก็บเกี่ยวความรู้เรื่องมวลอะตอม</div>
+    </div>
+  </div>
+  <div class="card hero">
+    <div class="hero-tags">
+      ${['H','C','O','Ca'].map(s=>renderTag(ELBY[s],false)).join('')}
+    </div>
+    <div>
+      <p style="margin:0 0 6px;font-weight:600;">ตอบคำถามมวลอะตอม เพื่อรดน้ำให้สวนของคุณเติบโต แล้วเก็บเกี่ยวธาตุหายากไปสะสม!</p>
+      <p class="muted" style="margin:0;">เล่นเป็นนักเรียนเพื่อปลูกสวนของตัวเอง หรือเข้าระบบครูที่ปรึกษาเพื่อดูความก้าวหน้าของห้อง</p>
+    </div>
+  </div>
+  <div class="card-2 card row" style="justify-content:center;gap:14px;">
+    <button class="btn btn-primary" onclick="goStudentLogin()">🧑‍🌾 ฉันเป็นนักเรียน</button>
+    <button class="btn btn-outline" onclick="goTeacherLogin()">🧑‍🏫 ฉันเป็นครูที่ปรึกษา</button>
+  </div>
+  <p class="small-note">หมายเหตุ: ข้อมูลของนักเรียนทุกคนถูกเก็บแบบใช้ร่วมกัน (shared) เพื่อให้ครูที่ปรึกษาดูภาพรวมได้ จึงไม่ใช่ข้อมูลส่วนตัวที่ปิดสนิท เหมาะสำหรับใช้ในกิจกรรมห้องเรียน ไม่ควรใส่ข้อมูลสำคัญส่วนบุคคล</p>
+  `;
+}
+function renderTag(el, locked, small){
+  const t = tierOf(el.m);
+  const cls = 'tag'+(small?' small':'')+(locked?' locked':'');
+  return `<div class="${cls}" style="background:${tierColor(t)}">
+    <span class="sym">${el.s}</span><span class="mass">${el.m}</span>
+  </div>`;
+}
+
+/* ===================== STUDENT LOGIN ===================== */
+function goStudentLogin(){ STATE.view='studentLogin'; render(); }
+function renderStudentLogin(){
+  return `
+  <div class="brandbar"><div class="brand-title">🌱 สวนมวลอะตอม</div></div>
+  <div class="card">
+    <h3 style="font-family:var(--font-display);margin-top:0;">เริ่มปลูกสวนของคุณ</h3>
+    <div class="field"><label>ชื่อ (หรือชื่อเล่น)</label><input id="inName" placeholder="เช่น น้องพลอย"></div>
+    <div class="field"><label>ห้อง/กลุ่ม (ถ้ามี)</label><input id="inClass" placeholder="เช่น ม.4/2 เลขที่ 12"></div>
+    <button class="btn btn-primary" onclick="submitStudentLogin()">เริ่มเล่น 🌱</button>
+    <button class="btn btn-outline" style="margin-left:8px;" onclick="goHome()">กลับ</button>
+    <p class="small-note">หากคุณเคยเล่นด้วยชื่อนี้และห้องนี้มาก่อน ระบบจะโหลดสวนเดิมของคุณต่อให้อัตโนมัติ</p>
+  </div>`;
+}
+async function submitStudentLogin(){
+  const name = document.getElementById('inName').value.trim();
+  const classroom = document.getElementById('inClass').value.trim();
+  if(!name){ toast('กรุณาใส่ชื่อก่อนนะ','err'); return; }
+  STATE.view='loading'; STATE.loadingMsg='กำลังเตรียมสวน...'; render();
+  const id = slugify(name)+'__'+slugify(classroom||'na');
+  let s = await loadStudent(id);
+  if(!s){
+    s = newStudent(name, classroom, id);
+    await saveStudent(s);
+    const idx = await loadIndex();
+    if(!idx.find(it=>it.id===id)){ idx.push({id, name, classroom: s.classroom}); await saveIndex(idx); }
+  }
+  await rawSet('my_student_id', id, false);
+  STATE.student = s; STATE.tab='garden'; STATE.view='student'; render();
+}
+function goHome(){ STATE.view='home'; render(); }
+function switchUser(){
+  rawDelete('my_student_id', false);
+  STATE.student=null; STATE.view='studentLogin'; render();
+}
+
+/* ===================== STUDENT APP ===================== */
+function renderStudentApp(){
+  const s = STATE.student;
+  const lv = levelOf(s.xp);
+  const nextLvXp = lv*40;
+  const xpFrac = Math.min(1, (s.xp - (lv-1)*40) / 40);
+  const unread = s.notifications.length;
+  return `
+  <div class="brandbar">
+    <div>
+      <div class="brand-title">🌱 สวนของ ${escapeHtml(s.name)}</div>
+      <div class="brand-sub">${escapeHtml(s.classroom)} · เลเวล ${lv} · ${levelTitle(lv)}</div>
+    </div>
+    <button class="switchlink" onclick="switchUser()">เปลี่ยนผู้ใช้</button>
+  </div>
+
+  <div class="topstats">
+    <div class="stat-chip"><b>🪙 ${fmt(s.coins)}</b><span>เหรียญ</span></div>
+    <div class="stat-chip"><b>${fmt(s.xp)}</b><span>XP (ถัดไป ${nextLvXp})</span></div>
+    <div class="stat-chip"><b>${Object.keys(s.collection).length}/19</b><span>ธาตุที่เก็บได้</span></div>
+    <div class="stat-chip"><b>${s.totalAnswered? Math.round(100*s.totalCorrect/s.totalAnswered):0}%</b><span>ความแม่นยำ</span></div>
+  </div>
+  <div class="progress" style="margin-bottom:16px;"><i style="width:${xpFrac*100}%"></i></div>
+
+  <div class="tabs">
+    <button class="tab ${STATE.tab==='garden'?'active':''}" onclick="setTab('garden')">🪴 สวนของฉัน</button>
+    <button class="tab ${STATE.tab==='collection'?'active':''}" onclick="setTab('collection')">📒 คอลเลกชัน</button>
+    <button class="tab ${STATE.tab==='notify'?'active':''}" onclick="setTab('notify')">🔔 แจ้งเตือน${unread?`<span class="pip">${unread}</span>`:''}</button>
+  </div>
+
+  ${STATE.tab==='garden' ? renderGardenTab(s) : ''}
+  ${STATE.tab==='collection' ? renderCollectionTab(s) : ''}
+  ${STATE.tab==='notify' ? renderNotifyTab(s) : ''}
+  `;
+}
+function setTab(t){ STATE.tab=t; render(); }
+function escapeHtml(str){ return (str||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function renderGardenTab(s){
+  const expandCosts = [60,140,260,420,600];
+  const canExpand = s.maxPlots < 9;
+  const expandCost = expandCosts[s.maxPlots-4] || 9999;
+  return `
+  <div class="card" style="text-align:center;margin-bottom:14px;">
+    <button class="btn btn-amber" onclick="openQuiz()">🧪 ตอบคำถามมวลอะตอม (รดน้ำสวน + รับเหรียญ)</button>
+  </div>
+  <div class="card">
+    <div class="row between"><h3 style="font-family:var(--font-display);margin:0;">แปลงปลูก</h3>
+      <span class="muted">${s.maxPlots} แปลง</span></div>
+    <div class="plotgrid" style="margin-top:12px;">
+      ${s.plots.map((p,i)=>renderPlot(p,i)).join('')}
+    </div>
+    ${canExpand ? `<button class="btn btn-outline btn-sm" onclick="expandPlot()">+ ขยายแปลง (${fmt(expandCost)} 🪙)</button>` : `<p class="muted">ขยายแปลงครบแล้ว (9 แปลง)</p>`}
+  </div>
+  <div class="card">
+    <h3 style="font-family:var(--font-display);margin-top:0;">ร้านขายเมล็ดธาตุ</h3>
+    <div class="shoprow">
+      ${ELEMENTS.map(el=>renderShopCard(el,s)).join('')}
+    </div>
+  </div>`;
+}
+function renderPlot(p,i){
+  if(!p) return `<div class="plot empty"><div>แปลงว่าง</div><div style="font-size:22px;">➕</div><div class="plot-name">ซื้อเมล็ดด้านล่าง</div></div>`;
+  const el = ELBY[p.s];
+  const frac = Math.min(1, p.g / p.t);
+  const ready = p.g >= p.t;
+  return `<div class="plot ${ready?'ready':''}">
+    <div class="plot-name">${el.s} · มวล ${el.m}</div>
+    <div class="plot-emoji">${plotEmoji(frac,ready)}</div>
+    <div class="progress"><i style="width:${frac*100}%"></i></div>
+    ${ready ? `<button class="btn btn-primary btn-sm" style="margin-top:6px;" onclick="harvestPlot(${i})">เก็บเกี่ยว</button>`
+            : `<div class="plot-name">${Math.floor(frac*100)}%</div>`}
+  </div>`;
+}
+function renderShopCard(el,s){
+  const t = tierOf(el.m);
+  const price = priceOf(el.m);
+  const noPlot = !s.plots.some(p=>p===null);
+  const noCoin = s.coins < price;
+  return `<div class="shopcard">
+    ${renderTag(el,false,true)}
+    <div style="font-size:11.5px;margin-top:6px;">${escapeHtml(el.n)}</div>
+    <div class="price">🪙 ${fmt(price)}</div>
+    <div class="muted" style="font-size:10.5px;margin-bottom:6px;">${tierLabel(t)}</div>
+    <button class="btn btn-primary btn-sm" ${(noPlot||noCoin)?'disabled':''} onclick="buySeed('${el.s}')">ปลูก</button>
+  </div>`;
+}
+async function buySeed(sym){
+  const s = STATE.student;
+  const el = ELBY[sym];
+  const price = priceOf(el.m);
+  const emptyIdx = s.plots.findIndex(p=>p===null);
+  if(emptyIdx===-1){ toast('ไม่มีแปลงว่าง ขยายแปลงหรือเก็บเกี่ยวก่อนนะ','err'); return; }
+  if(s.coins < price){ toast('เหรียญไม่พอ ตอบคำถามเพื่อสะสมเหรียญเพิ่มได้นะ','err'); return; }
+  s.coins -= price;
+  s.plots[emptyIdx] = { s: sym, g: 0, t: targetGrowth(el.m) };
+  await saveStudent(s);
+  toast(`ปลูก ${el.s} (${el.n}) แล้ว!`, 'ok');
+  render();
+}
+async function expandPlot(){
+  const s = STATE.student;
+  const expandCosts = [60,140,260,420,600];
+  if(s.maxPlots>=9) return;
+  const cost = expandCosts[s.maxPlots-4];
+  if(s.coins<cost){ toast('เหรียญไม่พอสำหรับขยายแปลง','err'); return; }
+  s.coins -= cost; s.maxPlots += 1; s.plots.push(null);
+  await saveStudent(s);
+  toast('ขยายแปลงสำเร็จ!','ok');
+  render();
+}
+async function harvestPlot(i){
+  const s = STATE.student;
+  const p = s.plots[i];
+  if(!p) return;
+  const el = ELBY[p.s];
+  if(p.g < p.t) return;
+  const coins = harvestCoins(el.m), xp = harvestXp(el.m);
+  s.coins += coins; s.xp += xp;
+  s.collection[el.s] = (s.collection[el.s]||0) + 1;
+  s.plots[i] = null;
+  await saveStudent(s);
+  toast(`เก็บเกี่ยว ${el.s} ได้ 🪙${fmt(coins)} และ ${xp} XP!`, 'ok');
+  render();
+}
+
+function renderCollectionTab(s){
+  return `<div class="card">
+    <h3 style="font-family:var(--font-display);margin-top:0;">คอลเลกชันธาตุ (${Object.keys(s.collection).length}/19)</h3>
+    <div class="colgrid">
+      ${ELEMENTS.map(el=>{
+        const cnt = s.collection[el.s]||0;
+        return `<div class="colitem">${renderTag(el, cnt===0)}<div class="cnt">${cnt>0? 'x'+cnt : 'ยังไม่ได้'}</div></div>`;
+      }).join('')}
+    </div>
+    ${(s.badges.length||s.items.length) ? `<hr class="hl">
+      <h3 style="font-family:var(--font-display);margin:0 0 8px;font-size:16px;">รางวัลจากครู</h3>
+      ${s.badges.map(b=>`<span class="badge-pill">🏅 ${escapeHtml(b.name)}</span>`).join('')}
+      ${s.items.map(it=>`<span class="badge-pill" style="background:var(--copper);">🎁 ${escapeHtml(it.name)}</span>`).join('')}
+    ` : ''}
+  </div>`;
+}
+function renderNotifyTab(s){
+  const list = !s.notifications.length
+    ? `<p class="muted">ยังไม่มีการแจ้งเตือน เมื่อครูที่ปรึกษามอบรางวัลให้ จะแสดงที่นี่</p>`
+    : s.notifications.map(n=>`<div class="notif-item">${escapeHtml(n.msg)}<div class="notif-time">${timeAgo(n.at)}</div></div>`).join('');
+  return `<div class="card">
+    <h3 style="font-family:var(--font-display);margin-top:0;">การแจ้งเตือน</h3>
+    ${list}
+  </div>
+  <p class="small-note" style="text-align:right;"><button class="switchlink" onclick="resetMyGarden()">ลบข้อมูลสวนนี้และเริ่มต้นใหม่</button></p>`;
+}
+async function resetMyGarden(){
+  if(!window.confirm('ต้องการลบข้อมูลสวนของคุณทั้งหมดและเริ่มต้นใหม่หรือไม่? การลบนี้ไม่สามารถย้อนกลับได้')) return;
+  const s = STATE.student;
+  await rawDelete('student:'+s.id, true);
+  await rawDelete('my_student_id', false);
+  const idx = await loadIndex();
+  await saveIndex(idx.filter(it=>it.id!==s.id));
+  STATE.student = null;
+  STATE.view='home'; render();
+  toast('ลบข้อมูลสวนแล้ว เริ่มต้นใหม่ได้เลย','ok');
+}
+
+/* ===================== QUIZ ===================== */
+function genQuestion(){
+  const correct = ELEMENTS[Math.floor(Math.random()*ELEMENTS.length)];
+  const asMass = Math.random() < 0.5;
+  if(asMass){
+    const distractors = pickRandom(ELEMENTS, 3, correct).map(e=>e.m);
+    const choices = shuffle([correct.m, ...distractors]);
+    return { q:`ธาตุ ${correct.n} (${correct.s}) มีมวลอะตอมประมาณเท่าใด?`, choices: choices.map(c=>String(c)), answer:String(correct.m), correctEl: correct };
+  } else {
+    const distractors = pickRandom(ELEMENTS, 3, correct);
+    const opts = shuffle([correct, ...distractors]);
+    return { q:`ธาตุที่มีมวลอะตอมประมาณ ${correct.m} คือธาตุใด?`, choices: opts.map(e=>`${e.s} (${e.n})`), answer:`${correct.s} (${correct.n})`, correctEl: correct };
+  }
+}
+function openQuiz(){
+  STATE.quiz = genQuestion();
+  STATE.quizAnswered = false;
+  STATE.modal = renderQuizModal();
+  render();
+}
+function renderQuizModal(){
+  const qz = STATE.quiz;
+  return `<div class="modal-overlay" id="quizOverlay">
+    <div class="modal-box">
+      <h3>🧪 คำถามมวลอะตอม</h3>
+      <p style="font-size:15.5px;">${qz.q}</p>
+      <div id="quizChoices">
+        ${qz.choices.map((c,idx)=>`<button class="choice-btn" id="qc${idx}" onclick="answerQuiz(${idx})">${escapeHtml(c)}</button>`).join('')}
+      </div>
+      <div id="quizResult"></div>
+      <div id="quizActions" style="margin-top:10px;"></div>
+    </div>
+  </div>`;
+}
+async function answerQuiz(idx){
+  if(STATE.quizAnswered) return;
+  STATE.quizAnswered = true;
+  const qz = STATE.quiz;
+  const s = STATE.student;
+  const chosen = qz.choices[idx];
+  const isCorrect = chosen === qz.answer;
+  qz.choices.forEach((c,i)=>{
+    const btn = document.getElementById('qc'+i);
+    if(!btn) return;
+    btn.disabled = true;
+    if(c===qz.answer) btn.classList.add('correct');
+    else if(i===idx) btn.classList.add('wrong');
+  });
+  s.totalAnswered += 1;
+  let resultMsg;
+  if(isCorrect){
+    s.totalCorrect += 1; s.coins += 12; s.xp += 6;
+    s.plots.forEach(p=>{ if(p){ p.g = Math.min(p.t, p.g + 7); } });
+    resultMsg = `<p style="color:#2F4F27;font-weight:600;margin-top:10px;">✅ ถูกต้อง! ได้รับ 🪙12 และรดน้ำให้สวนแล้ว</p>`;
+  } else {
+    s.coins += 2;
+    s.plots.forEach(p=>{ if(p){ p.g = Math.min(p.t, p.g + 2); } });
+    resultMsg = `<p style="color:#7A2C2C;font-weight:600;margin-top:10px;">ยังไม่ถูกนะ คำตอบที่ถูกคือ "${escapeHtml(qz.answer)}" — ได้รับ 🪙2 เป็นกำลังใจ</p>`;
+  }
+  document.getElementById('quizResult').innerHTML = resultMsg;
+  document.getElementById('quizActions').innerHTML = `
+    <button class="btn btn-amber btn-sm" onclick="nextQuiz()">ถามข้อต่อไป</button>
+    <button class="btn btn-outline btn-sm" onclick="closeQuiz()">ปิด</button>`;
+  await saveStudent(s);
+}
+function nextQuiz(){
+  STATE.quiz = genQuestion();
+  STATE.quizAnswered = false;
+  STATE.modal = renderQuizModal();
+  document.getElementById('quizOverlay').outerHTML = STATE.modal;
+}
+function closeQuiz(){
+  STATE.modal = null;
+  render();
+}
+
+/* ===================== TEACHER ===================== */
+function goTeacherLogin(){ STATE.view='teacherLogin'; render(); }
+function renderTeacherLogin(){
+  return `
+  <div class="brandbar"><div class="brand-title">🌱 สวนมวลอะตอม</div></div>
+  <div class="card">
+    <h3 style="font-family:var(--font-display);margin-top:0;">เข้าสู่ระบบครูที่ปรึกษา</h3>
+    <div class="field"><label>รหัสผ่านครู</label><input id="inPass" type="password" placeholder="กรอกรหัสผ่าน"></div>
+    <button class="btn btn-primary" onclick="submitTeacherLogin()">เข้าสู่ระบบ</button>
+    <button class="btn btn-outline" style="margin-left:8px;" onclick="goHome()">กลับ</button>
+    <p class="small-note">รหัสผ่านเริ่มต้นคือ "${TEACHER_CODE}" (ตั้งไว้ในไฟล์ ผู้พัฒนาสามารถเปลี่ยนได้) — นี่เป็นเพียงการกันคนผ่านเข้าใช้งานทั่วไป ไม่ใช่ระบบความปลอดภัยขั้นสูง</p>
+  </div>`;
+}
+async function submitTeacherLogin(){
+  const pass = document.getElementById('inPass').value;
+  if(pass !== TEACHER_CODE){ toast('รหัสผ่านไม่ถูกต้อง','err'); return; }
+  STATE.view='loading'; STATE.loadingMsg='กำลังโหลดข้อมูลนักเรียนทั้งหมด...'; render();
+  const idx = await loadIndex();
+  const results = await Promise.all(idx.map(it=>loadStudent(it.id)));
+  STATE.teacherStudents = results.filter(Boolean);
+  STATE.teacherFilter = 'ทั้งหมด';
+  STATE.view='teacher'; render();
+}
+function teacherLogout(){ STATE.teacherStudents=null; STATE.view='home'; render(); }
+
+function renderTeacherDashboard(){
+  const all = STATE.teacherStudents || [];
+  const rooms = ['ทั้งหมด', ...Array.from(new Set(all.map(s=>s.classroom)))];
+  const list = STATE.teacherFilter==='ทั้งหมด' ? all : all.filter(s=>s.classroom===STATE.teacherFilter);
+  const totalAnswered = list.reduce((a,s)=>a+s.totalAnswered,0);
+  const totalCorrect = list.reduce((a,s)=>a+s.totalCorrect,0);
+  const avgAcc = totalAnswered? Math.round(100*totalCorrect/totalAnswered) : 0;
+  const totalHarvest = list.reduce((a,s)=>a+Object.values(s.collection).reduce((x,y)=>x+y,0),0);
+  const top = list.slice().sort((a,b)=>b.xp-a.xp)[0];
+
+  const buckets = {};
+  list.forEach(s=>{ const lv=levelOf(s.xp); const key = lv<=2?'1-2':lv<=5?'3-5':lv<=9?'6-9':lv<=14?'10-14':'15+';
+    buckets[key]=(buckets[key]||0)+1; });
+  const bucketOrder = ['1-2','3-5','6-9','10-14','15+'];
+  const maxBucket = Math.max(1, ...Object.values(buckets));
+
+  const sorted = list.slice().sort((a,b)=>b.xp-a.xp);
+
+  return `
+  <div class="brandbar">
+    <div><div class="brand-title">🧑‍🏫 ห้องครูที่ปรึกษา</div><div class="brand-sub">ดูความก้าวหน้าและมอบรางวัลให้นักเรียน</div></div>
+    <button class="switchlink" onclick="teacherLogout()">ออกจากระบบครู</button>
+  </div>
+
+  <div class="row" style="margin-bottom:14px;">
+    <label class="muted" style="font-size:13px;">กรองตามห้อง/กลุ่ม:</label>
+    <select onchange="filterRoom(this.value)" style="padding:7px 10px;border-radius:8px;border:1px solid var(--line-dark);background:var(--surface);color:var(--ink);">
+      ${rooms.map(r=>`<option value="${escapeHtml(r)}" ${STATE.teacherFilter===r?'selected':''}>${escapeHtml(r)}</option>`).join('')}
+    </select>
+  </div>
+
+  <div class="summary4">
+    <div class="sumcard"><b>${list.length}</b><span>นักเรียนทั้งหมด</span></div>
+    <div class="sumcard"><b>${avgAcc}%</b><span>ความแม่นยำเฉลี่ย</span></div>
+    <div class="sumcard"><b>${fmt(totalHarvest)}</b><span>ธาตุที่เก็บเกี่ยวรวม</span></div>
+    <div class="sumcard"><b style="font-size:15px;">${top? escapeHtml(top.name) : '-'}</b><span>นักเรียนยอดเยี่ยม (XP สูงสุด)</span></div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-family:var(--font-display);margin-top:0;">การกระจายตัวระดับเลเวล</h3>
+    ${bucketOrder.map(b=>`<div class="bar-row"><div class="lbl">เลเวล ${b}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${((buckets[b]||0)/maxBucket)*100}%"></div></div>
+      <div class="ct">${buckets[b]||0}</div></div>`).join('')}
+  </div>
+
+  <div class="card">
+    <h3 style="font-family:var(--font-display);margin-top:0;">รายชื่อนักเรียน</h3>
+    ${sorted.length===0 ? `<p class="muted">ยังไม่มีนักเรียนลงทะเบียนเล่น</p>` : `
+    <table>
+      <tr><th>ชื่อ</th><th>ห้อง/กลุ่ม</th><th>เลเวล</th><th>XP</th><th>เหรียญ</th><th>ธาตุ</th><th>แม่นยำ</th><th>เล่นล่าสุด</th></tr>
+      ${sorted.map(s=>`<tr class="rowlink" onclick="openStudentDetail('${s.id}')">
+        <td class="name-cell">${escapeHtml(s.name)}</td>
+        <td>${escapeHtml(s.classroom)}</td>
+        <td>${levelOf(s.xp)}</td>
+        <td>${fmt(s.xp)}</td>
+        <td>${fmt(s.coins)}</td>
+        <td>${Object.keys(s.collection).length}/19</td>
+        <td>${s.totalAnswered? Math.round(100*s.totalCorrect/s.totalAnswered):0}%</td>
+        <td>${timeAgo(s.lastActive)}</td>
+      </tr>`).join('')}
+    </table>`}
+  </div>
+  `;
+}
+function filterRoom(v){ STATE.teacherFilter=v; render(); }
+
+function openStudentDetail(id){
+  const s = STATE.teacherStudents.find(x=>x.id===id);
+  if(!s) return;
+  STATE.modal = renderStudentDetailModal(s);
+  render();
+}
+function renderStudentDetailModal(s){
+  const lv = levelOf(s.xp);
+  return `<div class="modal-overlay" id="detailOverlay">
+    <div class="modal-box">
+      <h3>${escapeHtml(s.name)} <span class="muted" style="font-size:13px;">(${escapeHtml(s.classroom)})</span></h3>
+      <p class="muted" style="margin-top:-6px;">เลเวล ${lv} · ${levelTitle(lv)} · XP ${fmt(s.xp)} · 🪙${fmt(s.coins)}</p>
+      <div class="colgrid" style="margin-bottom:12px;">
+        ${ELEMENTS.map(el=>{ const cnt=s.collection[el.s]||0; return `<div class="colitem">${renderTag(el,cnt===0,true)}<div class="cnt">${cnt>0?'x'+cnt:'-'}</div></div>`; }).join('')}
+      </div>
+      ${(s.badges.length||s.items.length) ? `
+        ${s.badges.map(b=>`<span class="badge-pill">🏅 ${escapeHtml(b.name)}</span>`).join('')}
+        ${s.items.map(it=>`<span class="badge-pill" style="background:var(--copper);">🎁 ${escapeHtml(it.name)}</span>`).join('')}
+      `:''}
+      <hr class="hl">
+      <h3 style="font-size:16px;margin:0 0 10px;">มอบรางวัล</h3>
+      <div class="field"><label>ประเภทรางวัล</label>
+        <select id="rewardType" onchange="onRewardTypeChange()">
+          <option value="coins">เหรียญ</option>
+          <option value="xp">XP</option>
+          <option value="item">ไอเทมพิเศษ</option>
+          <option value="badge">เหรียญตรา (Badge)</option>
+        </select>
+      </div>
+      <div id="rewardValueField">
+        <div class="field"><label>จำนวน</label><input id="rewardAmount" type="number" min="1" placeholder="เช่น 50"></div>
+      </div>
+      <div class="field"><label>หมายเหตุถึงนักเรียน (ไม่บังคับ)</label><input id="rewardNote" placeholder="เช่น ตั้งใจทำการบ้านดีมาก"></div>
+      <button class="btn btn-primary" onclick="submitReward('${s.id}')">มอบรางวัล</button>
+      <button class="btn btn-outline" style="margin-left:8px;" onclick="closeModal()">ปิด</button>
+    </div>
+  </div>`;
+}
+function onRewardTypeChange(){
+  const t = document.getElementById('rewardType').value;
+  const field = document.getElementById('rewardValueField');
+  if(t==='coins' || t==='xp'){
+    field.innerHTML = `<div class="field"><label>จำนวน</label><input id="rewardAmount" type="number" min="1" placeholder="เช่น 50"></div>`;
+  } else {
+    field.innerHTML = `<div class="field"><label>ชื่อ${t==='item'?'ไอเทม':'เหรียญตรา'}</label><input id="rewardName" placeholder="${t==='item'?'เช่น เมล็ดทองคำ':'เช่น สุดยอดนักเคมี'}"></div>`;
+  }
+}
+async function submitReward(id){
+  const s = STATE.teacherStudents.find(x=>x.id===id);
+  if(!s) return;
+  const type = document.getElementById('rewardType').value;
+  const note = document.getElementById('rewardNote').value.trim();
+  let msg = '';
+  if(type==='coins'){
+    const v = parseInt(document.getElementById('rewardAmount').value)||0;
+    if(v<=0){ toast('กรุณาใส่จำนวนที่มากกว่า 0','err'); return; }
+    s.coins += v; msg = `ครูมอบเหรียญให้ ${v} เหรียญ`;
+  } else if(type==='xp'){
+    const v = parseInt(document.getElementById('rewardAmount').value)||0;
+    if(v<=0){ toast('กรุณาใส่จำนวนที่มากกว่า 0','err'); return; }
+    s.xp += v; msg = `ครูมอบ XP ให้ ${v} XP`;
+  } else if(type==='item'){
+    const name = (document.getElementById('rewardName').value||'').trim();
+    if(!name){ toast('กรุณาใส่ชื่อไอเทม','err'); return; }
+    s.items.push({name, from:'teacher', at:Date.now()}); msg = `ครูมอบไอเทมพิเศษ: ${name}`;
+  } else if(type==='badge'){
+    const name = (document.getElementById('rewardName').value||'').trim();
+    if(!name){ toast('กรุณาใส่ชื่อเหรียญตรา','err'); return; }
+    s.badges.push({name, at:Date.now()}); msg = `ครูมอบเหรียญตรา: ${name}`;
+  }
+  if(note) msg += ` ("${note}")`;
+  s.notifications.unshift({msg, at:Date.now()});
+  if(s.notifications.length>20) s.notifications.length = 20;
+  await saveStudent(s);
+  toast('มอบรางวัลสำเร็จ','ok');
+  closeModal();
+}
+function closeModal(){ STATE.modal=null; render(); }
+
+/* ===================== INIT ===================== */
+async function init(){
+  STATE.view='loading'; STATE.loadingMsg='กำลังโหลดข้อมูล...'; render();
+  const myId = await rawGet('my_student_id', false);
+  if(myId){
+    const s = await loadStudent(myId);
+    if(s){ STATE.student=s; STATE.tab='garden'; STATE.view='student'; render(); return; }
+  }
+  STATE.view='home'; render();
+}
+init();
+</script>
+</body>
+</html>
